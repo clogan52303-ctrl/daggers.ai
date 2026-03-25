@@ -3,7 +3,7 @@ const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
   headers: {
     "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
     "Content-Type": "application/json",
-     'HTTP-Referer': 'https://dagger-ai.vercel.app',,
+     'HTTP-Referer': 'https://YOUR-VERCEL-URL.vercel.app',
     "X-Title": "DAGGER.AI"
   },
   body: JSON.stringify({
