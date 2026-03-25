@@ -23,23 +23,17 @@ export default async function handler(req, res) {
     } = req.body || {};
 
     if (!artistName) {
-      return res.status(400).json({
-        error: 'Artist name is required.'
-      });
+      return res.status(400).json({ error: 'Artist name is required.' });
     }
 
     if (!spotifyLink && !soundcloudLink) {
-      return res.status(400).json({
-        error: 'Add at least one profile link.'
-      });
+      return res.status(400).json({ error: 'Add at least one profile link.' });
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({
-        error: 'Missing OPENAI_API_KEY environment variable.'
-      });
+      return res.status(500).json({ error: 'Missing OPENAI_API_KEY environment variable.' });
     }
 
     const systemPrompt = `
@@ -78,14 +72,6 @@ Use this exact shape:
   ],
   "promoCaptions": ["string", "string", "string"]
 }
-
-Rules:
-- Be direct, sharp, and helpful
-- Sound like a real A&R / growth strategist
-- Do not be robotic
-- Do not insult the artist
-- Keep each score from 1 to 10
-- Make the advice specific and practical
 `;
 
     const userPrompt = `
@@ -104,7 +90,7 @@ Extra Notes: ${notes || 'Not provided'}
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': \`Bearer \${apiKey}\`,
         'HTTP-Referer': 'https://YOUR-VERCEL-URL.vercel.app',
         'X-Title': 'DAGGER.AI'
       },
@@ -152,8 +138,4 @@ Extra Notes: ${notes || 'Not provided'}
       error: error?.message || 'Unexpected server error.'
     });
   }
-}} catch {
-  return res.status(500).json({ error: 'Model returned invalid JSON.', raw: content });
 }
-
-return res.status(200).json(parsed);
