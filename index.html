@@ -6,13 +6,14 @@
   <title>DAGGER.AI</title>
   <style>
     * { box-sizing: border-box; }
-    :root{
-      --bg:#0b0b0b;
-      --panel:#141414;
-      --line:#222;
-      --text:#f3f3f3;
-      --muted:#999;
-      --accent:#ff2e2e;
+
+    :root {
+      --bg: #0b0b0b;
+      --panel: #141414;
+      --line: #222;
+      --text: #f3f3f3;
+      --muted: #999;
+      --accent: #ff2e2e;
     }
 
     body {
@@ -111,6 +112,50 @@
       color: #ffb3b3;
       font-weight: bold;
     }
+
+    .section-title {
+      margin-top: 18px;
+      margin-bottom: 8px;
+      font-size: 18px;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .score-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      margin-top: 12px;
+    }
+
+    .score-box {
+      background: #101010;
+      border: 1px solid #252525;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .score-label {
+      color: #bdbdbd;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .score-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    ul {
+      padding-left: 18px;
+      line-height: 1.6;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 18px;
+    }
   </style>
 </head>
 <body>
@@ -136,6 +181,11 @@
         </div>
 
         <div>
+          <label for="soundcloudLink">SoundCloud Link</label>
+          <input id="soundcloudLink" type="text" placeholder="https://soundcloud.com/..." />
+        </div>
+
+        <div>
           <label for="goal">Main Goal</label>
           <select id="goal">
             <option value="Streams">Streams</option>
@@ -144,6 +194,11 @@
             <option value="Fanbase">Fanbase</option>
             <option value="Releases">Releases</option>
           </select>
+        </div>
+
+        <div>
+          <label for="latestSong">Latest Song</label>
+          <input id="latestSong" type="text" placeholder="Song title or link" />
         </div>
       </div>
 
@@ -158,7 +213,7 @@
 
     <div class="card">
       <div id="placeholder" class="muted">Your report will show up here.</div>
-      <div id="result" class="report"></div>
+      <div id="result"></div>
     </div>
   </div>
 
@@ -177,9 +232,67 @@
         .replaceAll("'", '&#39;');
     }
 
+    function renderList(items) {
+      if (!Array.isArray(items) || items.length === 0) return '<p class="muted">No data.</p>';
+      return '<ul>' + items.map(item => `<li>${esc(item)}</li>`).join('') + '</ul>';
+    }
+
+    function renderScores(scores) {
+      if (!scores) return '';
+      const entries = [
+        ['Branding Strength', scores.brandingStrength],
+        ['Marketability', scores.marketability],
+        ['Consistency', scores.consistency],
+        ['Replay Value', scores.replayValue],
+        ['Visual Identity', scores.visualIdentity],
+        ['Blow-Up Potential', scores.blowUpPotential]
+      ];
+
+      return `
+        <div class="score-grid">
+          ${entries.map(([label, value]) => `
+            <div class="score-box">
+              <div class="score-label">${esc(label)}</div>
+              <div class="score-value">${esc(value ?? 0)}/10</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderReport(data) {
+      resultBox.innerHTML = `
+        <div class="report">
+          <div class="section-title">Overall Verdict</div>
+          <p>${esc(data.overallVerdict || 'No verdict returned.')}</p>
+
+          <div class="section-title">Scores</div>
+          ${renderScores(data.scores)}
+
+          <div class="section-title">What’s Working</div>
+          ${renderList(data.working)}
+
+          <div class="section-title">What’s Hurting You</div>
+          ${renderList(data.hurting)}
+
+          <div class="section-title">Best Song To Push</div>
+          <p><strong>Track:</strong> ${esc(data.bestSongToPush?.track || 'Unknown')}</p>
+          <p><strong>Why:</strong> ${esc(data.bestSongToPush?.why || 'No reason returned.')}</p>
+
+          <div class="section-title">7-Day Action Plan</div>
+          ${renderList(data.sevenDayPlan)}
+
+          <div class="section-title">Promo Captions</div>
+          ${renderList(data.promoCaptions)}
+
+          <div class="footer-note">DAGGER.AI report generated for independent artist development.</div>
+        </div>
+      `;
+    }
+
     analyzeBtn.addEventListener('click', async () => {
       errorBox.innerHTML = '';
-      resultBox.textContent = '';
+      resultBox.innerHTML = '';
       placeholder.style.display = 'block';
       placeholder.innerHTML = '<span class="loading">Analyzing...</span>';
 
@@ -187,16 +300,16 @@
         artistName: document.getElementById('artistName').value.trim(),
         genre: document.getElementById('genre').value.trim(),
         spotifyLink: document.getElementById('spotifyLink').value.trim(),
+        soundcloudLink: document.getElementById('soundcloudLink').value.trim(),
         goal: document.getElementById('goal').value,
+        latestSong: document.getElementById('latestSong').value.trim(),
         notes: document.getElementById('notes').value.trim()
       };
 
       try {
         const res = await fetch('/api/analyze', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
@@ -205,7 +318,7 @@
         let data;
         try {
           data = JSON.parse(raw);
-        } catch (e) {
+        } catch {
           throw new Error('Server returned non-JSON response:\\n' + raw);
         }
 
@@ -214,16 +327,11 @@
         }
 
         placeholder.style.display = 'none';
-
-        if (data.result) {
-          resultBox.textContent = data.result;
-        } else {
-          resultBox.textContent = JSON.stringify(data, null, 2);
-        }
+        renderReport(data);
       } catch (err) {
         placeholder.style.display = 'block';
         placeholder.textContent = 'Your report will show up here.';
-        errorBox.innerHTML = '<div class="error">' + esc(err.message || 'Unknown error') + '</div>';
+        errorBox.innerHTML = `<div class="error">${esc(err.message || 'Unknown error')}</div>`;
       }
     });
   </script>
