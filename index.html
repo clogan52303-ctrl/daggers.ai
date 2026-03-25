@@ -358,16 +358,18 @@
         latestSong: form.latestSong.value.trim()
       };
 
-      try {
-       const data = await res.json();
+     const raw = await res.text();
+
+let data;
+try {
+  data = JSON.parse(raw);
+} catch {
+  throw new Error(raw || 'Server returned invalid JSON.');
+}
+
 if (!res.ok) {
   throw new Error(data.error || 'Failed to generate analysis.');
 }
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || 'Failed to generate analysis.');
         }
 
         placeholder.style.display = 'none';
