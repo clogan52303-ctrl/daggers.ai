@@ -6,12 +6,20 @@
   <title>DAGGER.AI</title>
   <style>
     * { box-sizing: border-box; }
+    :root{
+      --bg:#0b0b0b;
+      --panel:#141414;
+      --line:#222;
+      --text:#f3f3f3;
+      --muted:#999;
+      --accent:#ff2e2e;
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #0b0b0b;
-      color: #f3f3f3;
+      background: var(--bg);
+      color: var(--text);
       padding: 40px 20px;
     }
 
@@ -23,7 +31,7 @@
     h1 {
       font-size: 48px;
       margin-bottom: 10px;
-      color: #ff2e2e;
+      color: var(--accent);
     }
 
     p {
@@ -31,8 +39,8 @@
     }
 
     .card {
-      background: #141414;
-      border: 1px solid #222;
+      background: var(--panel);
+      border: 1px solid var(--line);
       border-radius: 14px;
       padding: 20px;
       margin-top: 24px;
@@ -67,7 +75,7 @@
     }
 
     button {
-      background: #ff2e2e;
+      background: var(--accent);
       border: none;
       font-weight: bold;
       cursor: pointer;
@@ -95,7 +103,7 @@
     }
 
     .muted {
-      color: #999;
+      color: var(--muted);
       font-size: 14px;
     }
 
@@ -198,7 +206,7 @@
         try {
           data = JSON.parse(raw);
         } catch (e) {
-          throw new Error('Server returned non-JSON response:\n' + raw);
+          throw new Error('Server returned non-JSON response:\\n' + raw);
         }
 
         if (!res.ok) {
@@ -215,251 +223,7 @@
       } catch (err) {
         placeholder.style.display = 'block';
         placeholder.textContent = 'Your report will show up here.';
-        errorBox.innerHTML = `<div class="error">${esc(err.message || 'Unknown error')}</div>`;
-      }
-    });
-  </script>
-</body>
-</html>      font-size: 16px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin: 20px 0 10px;
-    }
-    .score {
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-    }
-    .score .k {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
-    .score .v {
-      font-size: 32px;
-      font-weight: 800;
-      color: var(--text);
-    }
-    .section {
-      margin-top: 22px;
-      padding-top: 4px;
-    }
-    .section h3 {
-      margin: 0 0 12px;
-      font-size: 18px;
-      letter-spacing: -.02em;
-    }
-    ul, ol {
-      margin: 0;
-      padding-left: 18px;
-      color: #ededed;
-      line-height: 1.7;
-    }
-    .song-box {
-      background: linear-gradient(180deg, rgba(217,31,38,.12), rgba(255,255,255,.02));
-      border: 1px solid rgba(217,31,38,.25);
-      border-radius: 16px;
-      padding: 18px;
-    }
-    .song-title {
-      font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-    .error {
-      background: rgba(217,31,38,.12);
-      border: 1px solid rgba(217,31,38,.25);
-      color: #ffd7d8;
-      padding: 14px;
-      border-radius: 12px;
-      margin-top: 16px;
-    }
-    .footer-note {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-    }
-    @media (max-width: 860px) {
-      .hero { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 580px) {
-      .wrap { padding: 20px 14px 40px; }
-      .hero-copy, .form-card, .results { padding: 18px; }
-      .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 44px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <section class="hero">
-      <div class="card hero-copy">
-        <div class="eyebrow">DAGGER.AI</div>
-        <h1>Your music might be hard. Your rollout probably isn't.</h1>
-        <p class="sub">Paste your artist links and get a blunt A&amp;R-style read on your branding, momentum, strongest angle, weak points, and what to do next.</p>
-        <div class="pillrow">
-          <div class="pill">A&amp;R-style feedback</div>
-          <div class="pill">7-day action plan</div>
-          <div class="pill">Promo captions</div>
-          <div class="pill">Underground artist focus</div>
-        </div>
-      </div>
-
-      <div class="card form-card">
-        <h2>Run Artist Check</h2>
-        <form id="analysisForm">
-          <label for="artistName">Artist Name</label>
-          <input id="artistName" name="artistName" placeholder="CodeanX6" required />
-
-          <label for="spotifyLink">Spotify Link</label>
-          <input id="spotifyLink" name="spotifyLink" placeholder="https://open.spotify.com/artist/..." />
-
-          <label for="soundcloudLink">SoundCloud Link</label>
-          <input id="soundcloudLink" name="soundcloudLink" placeholder="https://soundcloud.com/..." />
-
-          <label for="genre">Main Genre</label>
-          <input id="genre" name="genre" placeholder="Dark melodic rap" />
-
-          <label for="goal">What do you want to grow right now?</label>
-          <select id="goal" name="goal">
-            <option value="Streams">Streams</option>
-            <option value="Followers">Followers</option>
-            <option value="Branding">Branding</option>
-            <option value="Fanbase">Fanbase</option>
-            <option value="Releases">Releases</option>
-          </select>
-
-          <label for="latestSong">Latest Song or Project</label>
-          <input id="latestSong" name="latestSong" placeholder="daggers.exe" />
-
-          <button id="submitBtn" class="btn" type="submit">Analyze My Profile</button>
-          <div class="helper">This V1 infers from the info you enter. Later versions can pull richer profile data directly.</div>
-        </form>
-      </div>
-    </section>
-
-    <section class="card results" id="results">
-      <h2>Analysis Output</h2>
-      <div class="placeholder" id="placeholder">Your report will show up here.</div>
-      <div id="errorBox"></div>
-      <div id="report"></div>
-      <div class="footer-note">Tip: for stronger output, include your main platform link, genre, and the exact song you want to push.</div>
-    </section>
-  </div>
-
-  <script>
-    const form = document.getElementById('analysisForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const placeholder = document.getElementById('placeholder');
-    const reportEl = document.getElementById('report');
-    const errorBox = document.getElementById('errorBox');
-
-    function esc(text) {
-      return String(text ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
-
-    function renderList(items) {
-      return `<ul>${(items || []).map(item => `<li>${esc(item)}</li>`).join('')}</ul>`;
-    }
-
-    function renderReport(data) {
-      const scores = data.scores || {};
-      reportEl.innerHTML = `
-        <div class="section">
-          <h3>Overall Verdict</h3>
-          <div class="overview">${esc(data.overallVerdict || 'No verdict returned.')}</div>
-        </div>
-
-        <div class="grid">
-          <div class="score"><div class="k">Branding Strength</div><div class="v">${esc(scores.brandingStrength ?? '-')}<span style="font-size:16px;font-weight:600">/10</span></div></div>
-          <div class="score"><div class="k">Marketability</div><div class="v">${esc(scores.marketability ?? '-')}<span style="font-size:16px;font-weight:600">/10</span></div></div>
-          <div class="score"><div class="k">Consistency</div><div class="v">${esc(scores.consistency ?? '-')}<span style="font-size:16px;font-weight:600">/10</span></div></div>
-          <div class="score"><div class="k">Replay Value</div><div class="v">${esc(scores.replayValue ?? '-')}<span style="font-size:16px;font-weight:600">/10</span></div></div>
-          <div class="score"><div class="k">Visual Identity</div><div class="v">${esc(scores.visualIdentity ?? '-')}<span style="font-size:16px;font-weight:600">/10</span></div></div>
-          <div class="score"><div class="k">Blow-Up Potential</div><div class="v">${esc(scores.blowUpPotential ?? '-')}<span style="font-size:16px;font-weight:600">/10</span></div></div>
-        </div>
-
-        <div class="section">
-          <h3>What's Working</h3>
-          ${renderList(data.working)}
-        </div>
-
-        <div class="section">
-          <h3>What's Hurting You</h3>
-          ${renderList(data.hurting)}
-        </div>
-
-        <div class="section">
-          <h3>Best Song To Push</h3>
-          <div class="song-box">
-            <div class="song-title">${esc(data.bestSongToPush?.track || 'No track returned')}</div>
-            <div class="overview">${esc(data.bestSongToPush?.why || '')}</div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h3>7-Day Action Plan</h3>
-          ${renderList(data.sevenDayPlan)}
-        </div>
-
-        <div class="section">
-          <h3>Promo Captions</h3>
-          <ol>${(data.promoCaptions || []).map(item => `<li>${esc(item)}</li>`).join('')}</ol>
-        </div>
-      `;
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorBox.innerHTML = '';
-      reportEl.innerHTML = '';
-      placeholder.style.display = 'block';
-      placeholder.textContent = 'Scanning artist profile and generating report...';
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Analyzing...';
-
-      const payload = {
-        artistName: form.artistName.value.trim(),
-        spotifyLink: form.spotifyLink.value.trim(),
-        soundcloudLink: form.soundcloudLink.value.trim(),
-        genre: form.genre.value.trim(),
-        goal: form.goal.value,
-        latestSong: form.latestSong.value.trim()
-      };
-
-     const raw = await res.text();
-
-let data;
-try {
-  data = JSON.parse(raw);
-} catch {
-  throw new Error(raw || 'Server returned invalid JSON.');
-}
-
-if (!res.ok) {
-  throw new Error(data.error || 'Failed to generate analysis.');
-}
-        }
-
-        placeholder.style.display = 'none';
-        renderReport(data);
-      } catch (err) {
-        placeholder.textContent = 'Your report will show up here.';
-        errorBox.innerHTML = `<div class="error">${esc(err.message)}</div>`;
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Analyze My Profile';
+        errorBox.innerHTML = '<div class="error">' + esc(err.message || 'Unknown error') + '</div>';
       }
     });
   </script>
